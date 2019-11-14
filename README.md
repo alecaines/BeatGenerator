@@ -11,5 +11,8 @@ After reviewing different papers on music generation, we found that the most com
 ## Datasets
 There are many massive datasets online that provide genre or instrument specific tracks that could be used to train the model.  One such dataset is the “Drum_space” dataset on github which provides 33,000 unique drum beats which has been used to generate new beat tracks by user altsoph.  Should we find the generation of beats more easily implementable than planned, there also exists the “Million Song Dataset” on Kaggle which provides 50,000 genre-labeled audio tracks which could be trained to produce genre-specific tracks rather than beats only. 
 
+New Sources:
+https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_collection_on_the_internet/
+
 ## Target Function
 The appropriate target function for this project would be a sound byte from an ideal instrument’s lick. The methodology of the lick would revolve around comparing the original input and the predicted output. The extent to which style transfer was a success determines the accuracy of the model.
