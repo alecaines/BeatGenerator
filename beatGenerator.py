@@ -6,7 +6,7 @@ import scipy
 import numpy as np
 import glob as gb #locates files of a certain filetype
 import os
-import platform #just in case pydub (and ffmpeg) only work on windows
+import platform #for determining the operating system local to the machine
 
 class BEATGENERATOR(object):
     def __init__(self):
@@ -25,12 +25,13 @@ class BEATGENERATOR(object):
         # converts mp3 data to numpy array
         y = np.array(a.get_array_of_samples())
 
-        #not what exactly what the channels represents
+        #not what exactly what the channels represents other than two arbitrary filters in an audio file
         if a.channels == 2:
             y = y.reshape((-1,2))
         
         #normalizes elements
         if normalized:
+            #depending on what we use for our activation function, we may want to remove the zeroes and ones
             return a.frame_rate, np.float32(y)/2**15
         else:
             return a.frame_rate, y
@@ -45,14 +46,18 @@ class BEATGENERATOR(object):
 
     def main(self):
         osys = platform.system()
+        # I (Alexander) am unsure if ffmpeg works differently on different operating systems. So to be safe, I'm deferring to working with Windows.
+        # I will check later if this works on linux. If you wish to check if the program runs on a MAC, install ffmpeg off the site I linked in the
+        # else statement. After you have installed ffmpeg, replace 'Windows' with 'Darwin'
         if osys == 'Windows':
-            if os.path.exists('../songs'): #for running on Alexander's machine
-                mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs
+            if os.path.exists('../songs'): #for running on a windows machine
+                mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
                 
                 for i in range(len(mp3_files)):
-                    #the following returns an np array (vector) representing one mp3 file
-                    #each element represents audio data at one millisecond in the audio file
-                    frame_rate, vector = self.transformData(mp3_files[i]) #framerate is in milliseconds
+                    #the following returns an np array (vector) representing one mp3 file.
+                    # I believe each element represents audio data at one millisecond in the audio file
+                    # but I am not entirely sure. 
+                    frame_rate, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
                     filename = str(mp3_files[i])[9:] + ".txt"
                     self.proofOfWork(vector, filename) #should be a global array
 
