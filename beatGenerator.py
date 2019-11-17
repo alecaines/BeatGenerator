@@ -64,8 +64,8 @@ class BEATGENERATOR(object):
                 f = "Hip Hop SFX.mp3"
                 #the following returns an np array (vector) representing one mp3 file
                 frame_rate, vector = self.transformData(f) #framerate is in milliseconds
-                
-                print(frame_rate)
+                filename = str(f)+ ".txt"
+                self.proofOfWork(vector, filename) #should be a global array
             
         else:
             print("Please install  ffmpeg for "+osys+". http://www.ffmpeg.org/download.html")
