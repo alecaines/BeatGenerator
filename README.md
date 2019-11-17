@@ -8,6 +8,9 @@ The objective of this project create a generative model for songs given a certai
 ## Model
 After reviewing different papers on music generation, we found that the most commonly used networks were long short term memory, generative adversarial networks, and recurrent neural networks. The models that seemed to yield the highest precision and accuracy (given the objectives set out by the individual researchers) were CNN’s and different variations of LSTM’s. These networks, however, were used to generate--as we mentioned before--sound-bytes that falls under the same genre as symphonic music. Because of the relatively small length of the sound-bytes and their desired highly repetitive nature, we will set out to implement a canonical recurrent neural net. We will use Tensorflow as the framework for implementing the model.
 
+## Preparing Environment
+In order to run the model, ffmpeg must be installed on the system. For Windows machines, this video https://www.youtube.com/watch?v=w1q7POTlJeY provides clear instructions for installing ffmpeg. The builds for all machines can be found  at http://www.ffmpeg.org/download.html but the necessary preparations for linux and mac are unknown to me (Alexander Caines).
+
 ## Datasets
 There are many massive datasets online that provide genre or instrument specific tracks that could be used to train the model.  One such dataset is the “Drum_space” dataset on github which provides 33,000 unique drum beats which has been used to generate new beat tracks by user altsoph.  Should we find the generation of beats more easily implementable than planned, there also exists the “Million Song Dataset” on Kaggle which provides 50,000 genre-labeled audio tracks which could be trained to produce genre-specific tracks rather than beats only. 
 
