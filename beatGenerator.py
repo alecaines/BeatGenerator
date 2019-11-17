@@ -13,8 +13,9 @@ class BEATGENERATOR(object):
         pass
 
     # converts mp3 to numpy array
-    def transformData(self, f, normalized = True, t = 10):
+    def transformData(self, f, normalized = True, t = 3):
         duration = t*1000 #converts to miliseconds
+
         #retrieves audio
         a = pydub.AudioSegment.from_mp3(file = f)[:duration]
 
@@ -40,25 +41,28 @@ class BEATGENERATOR(object):
 
 
     def main(self):
-        if platform.system() == 'Windows':
+        osys = platform.system()
+        if osys == 'Windows':
             if os.path.exists('../songs'): #for running on Alexander's machine
                 mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs
-
-                #the following returns an np array (vector) representing one mp3 file
-                #each element represents audio data at one millisecond in the audio file
-                frame_rate, vector = self.transformData(mp3_files[0]) #framerate is in milliseconds
-                filename = str(mp3_files[0])[9:] + ".txt"
-                self.proofOfWork(vector, filename) #should be a global array
+                
+                for i in range(len(mp3_files)):
+                    #the following returns an np array (vector) representing one mp3 file
+                    #each element represents audio data at one millisecond in the audio file
+                    frame_rate, vector = self.transformData(mp3_files[i]) #framerate is in milliseconds
+                    filename = str(mp3_files[i])[9:] + ".txt"
+                    self.proofOfWork(vector, filename) #should be a global array
 
             else:
                 f = "Hip Hop SFX.mp3"
                 #the following returns an np array (vector) representing one mp3 file
-                frame_rate, train = self.transformData(f) #framerate is in milliseconds
+                frame_rate, vector = self.transformData(f) #framerate is in milliseconds
                 
                 print(frame_rate)
             
         else:
-            print("Support for " + str(platform.system()) + " will be implemented soon")
+            print("Please install  ffmpeg for "+osys+".")
+            print("Support for " + osys + " will be implemented soon")
 
 if __name__ == "__main__":
     BEATGENERATOR().main()
