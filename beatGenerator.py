@@ -4,13 +4,16 @@
 import pydub #allows for manipulation of audio
 import scipy
 import numpy as np
+import glob as gb #locates files of a certain filetype
+import platform #just in case pydub (and ffmpeg) only work on windows
 
 class BEATGENERATOR(object):
     def __init__(self):
         pass
 
-    def readData(self, normalized = False):
-        a = pydub.AudioSegment.from_mp3(file = "Hip Hop SFX.mp3")
+    def readData(self, f, normalized = False):
+        a = pydub.AudioSegment.from_mp3(file = f)
+
         y = np.array(a.get_array_of_samples())
         if a.channels == 2:
             y = y.reshape((-1,2))
@@ -20,7 +23,12 @@ class BEATGENERATOR(object):
             return a.frame_rate, y
 
     def main(self):
-        print(self.readData())
+        if platform.system() == 'Windows':
+            mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses
+
+            print(self.readData(mp3_files[0]))
+        else:
+            print("Support for " + str(platform.system()) + " will be implemented soon")
 
 if __name__ == "__main__":
     BEATGENERATOR().main()

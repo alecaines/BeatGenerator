@@ -13,20 +13,22 @@ There are many massive datasets online that provide genre or instrument specific
 
 ## Sources:
 Libraries
-https://pydub.com/
-https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.io.wavfile.read.html
-
+https://pydub.com/  
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/  scipy.io.wavfile.read.html    
+  
 Data
-https://unbelievablebeats.com/free-beats-free-downloads
-
+https://unbelievablebeats.com/free-beats-free-downloads  
+  
 Assistance
-https://stackoverflow.com/questions/53633177/how-to-read-a-mp3-audio-file-into-a-numpy-array-save-a-numpy-array-to-mp3?noredirect=1&lq=1
-
+https://stackoverflow.com/questions/53633177/  how-to-read-a-mp3-audio-file-into-a-numpy-array-save-a-numpy-array-to-mp3?noredirect=1&lq=1  
+(some pydub) https://www.youtube.com/watch?v=4E7N7W1lUkU  
+(installing ffmpeg) https://www.youtube.com/watch?v=w1q7POTlJeY    
+  
 Resources
-https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_collection_on_the_internet/
-https://codepen.io/teropa/details/JLjXGK
-https://github.com/tensorflow/magenta/tree/master/magenta/models/drums_rnn
-https://arxiv.org/ftp/arxiv/papers/1804/1804.07300.pdf
+https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_collection_on_the_internet/  
+https://codepen.io/teropa/details/JLjXGK  
+https://github.com/tensorflow/magenta/tree/master/magenta/models/drums_rnn  
+https://arxiv.org/ftp/arxiv/papers/1804/1804.07300.pdf  
 
 
 
