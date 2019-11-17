@@ -30,10 +30,13 @@ class BEATGENERATOR(object):
         else:
             return a.frame_rate, y
     
-    #restricts data to a certain length (milliseconds)
-    def processData(self, v, f):
+    # writes quantified audio data to txt
+    def proofOfWork(self, v, filename):
+        f = open(filename, "w+")
         for i in range(len(v)):
             f.write(str(v[i]))
+        f.close()
+
 
     def main(self):
         if platform.system() == 'Windows':
@@ -43,11 +46,8 @@ class BEATGENERATOR(object):
                 #the following returns an np array (vector) representing one mp3 file
                 #each element represents audio data at one millisecond in the audio file
                 frame_rate, vector = self.transformData(mp3_files[0]) #framerate is in milliseconds
-                
-                filename = mp3_files[0]+".txt"
-                f = open(filename, "w+")
-                self.processData(vector, f) #should be a global array
-                f.close()
+                filename = str(mp3_files[0])[9:] + ".txt"
+                self.proofOfWork(vector, filename) #should be a global array
 
             else:
                 f = "Hip Hop SFX.mp3"
