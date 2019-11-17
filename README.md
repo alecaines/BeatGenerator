@@ -12,9 +12,21 @@ After reviewing different papers on music generation, we found that the most com
 There are many massive datasets online that provide genre or instrument specific tracks that could be used to train the model.  One such dataset is the “Drum_space” dataset on github which provides 33,000 unique drum beats which has been used to generate new beat tracks by user altsoph.  Should we find the generation of beats more easily implementable than planned, there also exists the “Million Song Dataset” on Kaggle which provides 50,000 genre-labeled audio tracks which could be trained to produce genre-specific tracks rather than beats only. 
 
 ## Sources:
+Libraries
+https://pydub.com/
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.io.wavfile.read.html
+
+Data
+https://unbelievablebeats.com/free-beats-free-downloads
+
+Assistance
+https://stackoverflow.com/questions/53633177/how-to-read-a-mp3-audio-file-into-a-numpy-array-save-a-numpy-array-to-mp3?noredirect=1&lq=1
+
+Resources
 https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_collection_on_the_internet/
 https://codepen.io/teropa/details/JLjXGK
 https://github.com/tensorflow/magenta/tree/master/magenta/models/drums_rnn
+https://arxiv.org/ftp/arxiv/papers/1804/1804.07300.pdf
 
 
 
