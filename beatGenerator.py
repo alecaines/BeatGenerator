@@ -4,7 +4,7 @@
 import pydub #allows for manipulation of audio
 import scipy
 import numpy as np
-import glob as gb #locates files of a certain filetype
+import glob as gb # glob lists the files of a certain filetype in a folder specified by the programmer
 import os
 import platform #for determining the operating system local to the machine
 
@@ -18,7 +18,6 @@ class BEATGENERATOR(object):
 
         #retrieves audio
         a = pydub.AudioSegment.from_mp3(file = f)
-
         if a.duration_seconds > t:
             a = a[:duration]
 
