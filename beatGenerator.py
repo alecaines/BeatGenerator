@@ -33,7 +33,7 @@ class BEATGENERATOR(object):
     #restricts data to a certain length (milliseconds)
     def processData(self, v, f):
         for i in range(len(v)):
-            f.write(str(f[i]))
+            f.write(str(v[i]))
 
     def main(self):
         if platform.system() == 'Windows':
