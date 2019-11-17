@@ -11,23 +11,26 @@ After reviewing different papers on music generation, we found that the most com
 ## Preparing Environment
 In order to run the model, ffmpeg must be installed on the system. For Windows machines, this video https://www.youtube.com/watch?v=w1q7POTlJeY provides clear instructions for installing ffmpeg. The builds for all machines can be found  at http://www.ffmpeg.org/download.html but the necessary preparations for linux and mac are unknown to me (Alexander Caines).
 
+## Libraries
+Because pydub allows for transformation and partitioning of audio files, we use it for data-processing.
+
 ## Datasets
 There are many massive datasets online that provide genre or instrument specific tracks that could be used to train the model.  One such dataset is the “Drum_space” dataset on github which provides 33,000 unique drum beats which has been used to generate new beat tracks by user altsoph.  Should we find the generation of beats more easily implementable than planned, there also exists the “Million Song Dataset” on Kaggle which provides 50,000 genre-labeled audio tracks which could be trained to produce genre-specific tracks rather than beats only. 
 
 ## Sources:
-Libraries
+Libraries  
 https://pydub.com/  
 https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/  scipy.io.wavfile.read.html    
   
-Data
+Data  
 https://unbelievablebeats.com/free-beats-free-downloads  
   
-Assistance
+Assistance  
 https://stackoverflow.com/questions/53633177/  how-to-read-a-mp3-audio-file-into-a-numpy-array-save-a-numpy-array-to-mp3?noredirect=1&lq=1  
 (some pydub) https://www.youtube.com/watch?v=4E7N7W1lUkU  
 (installing ffmpeg) https://www.youtube.com/watch?v=w1q7POTlJeY    
   
-Resources
+Additional Resources  
 https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_collection_on_the_internet/  
 https://codepen.io/teropa/details/JLjXGK  
 https://github.com/tensorflow/magenta/tree/master/magenta/models/drums_rnn  
