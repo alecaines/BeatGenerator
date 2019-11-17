@@ -20,7 +20,7 @@ There are many massive datasets online that provide genre or instrument specific
 ## Sources:
 Libraries  
 https://pydub.com/  
-https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/  scipy.io.wavfile.read.html    
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/    
   
 Data  
 https://unbelievablebeats.com/free-beats-free-downloads  
