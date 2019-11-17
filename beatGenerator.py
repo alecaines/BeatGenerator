@@ -33,7 +33,7 @@ class BEATGENERATOR(object):
     #restricts data to a certain length (milliseconds)
     def processData(self, v, f):
         for i in range(len(v)):
-            f.write(f[i])
+            f.write(str(f[i]))
 
     def main(self):
         if platform.system() == 'Windows':
@@ -48,7 +48,7 @@ class BEATGENERATOR(object):
                 f = open(filename, "w+")
                 self.processData(vector, f) #should be a global array
                 f.close()
-                
+
             else:
                 f = "Hip Hop SFX.mp3"
                 #the following returns an np array (vector) representing one mp3 file
