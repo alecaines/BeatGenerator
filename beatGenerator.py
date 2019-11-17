@@ -61,7 +61,7 @@ class BEATGENERATOR(object):
                 print(frame_rate)
             
         else:
-            print("Please install  ffmpeg for "+osys+".")
+            print("Please install  ffmpeg for "+osys+". http://www.ffmpeg.org/download.html")
             print("Support for " + osys + " will be implemented soon")
 
 if __name__ == "__main__":
