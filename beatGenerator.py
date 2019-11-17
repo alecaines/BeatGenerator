@@ -13,9 +13,10 @@ class BEATGENERATOR(object):
         pass
 
     # converts mp3 to numpy array
-    def transformData(self, f, normalized = True):
+    def transformData(self, f, normalized = True, t = 10):
+        duration = t*1000 #converts to miliseconds
         #retrieves audio
-        a = pydub.AudioSegment.from_mp3(file = f)
+        a = pydub.AudioSegment.from_mp3(file = f)[:duration]
 
         # converts mp3 data to numpy array
         y = np.array(a.get_array_of_samples())
