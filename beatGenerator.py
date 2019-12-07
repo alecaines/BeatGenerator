@@ -10,6 +10,10 @@
 #from sklearn.metrics import mean_squared_error
 import pydub #allows for manipulation of audio
 from pydub.playback import play
+import tensorflow
+import keras
+from keras.layers import Input, Dense
+from keras.models import Model
 import numpy as np
 import glob as gb # glob lists the files of a certain filetype in a folder specified by the programmer
 import os
@@ -19,9 +23,10 @@ class BEATGENERATOR(object):
         pass
 
     # converts mp3 to numpy array
-    def transformData(self, f):
+    def transformData(self, f, t = 3):
+        duration = t*1000 #converts to milliseconds
         #retrieves audio
-        a = pydub.AudioSegment.from_mp3(file = f)
+        a = pydub.AudioSegment.from_mp3(file = f)[:duration]
 
         # converts mp3 data to numpy array
         y = np.array(a.get_array_of_samples())
@@ -62,7 +67,6 @@ class BEATGENERATOR(object):
         # I (Alexander) am unsure if ffmpeg works differently on different operating systems. So to be safe, I'm deferring to working with Windows.
         # I will check later if this works on linux. If you wish to check if the program runs on a MAC, install ffmpeg off the site I linked in the
         # else statement. After you have installed ffmpeg, replace 'Windows' with 'Darwin'
-        print(os.path.exists('../songs'))
         if os.path.exists('../songs'): #for running on a windows machine
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             
@@ -72,17 +76,24 @@ class BEATGENERATOR(object):
                 # but I am not entirely sure. 
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
 
+                ##stores the audio vector in a file
                 #filename = str(mp3_files[i])[9:] + ".txt"
                 #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
-                self.playAudio(vector, frame_rate, channels)
+
+                ##plays the audio
+                #self.playAudio(vector, frame_rate, channels)
 
         else:
             f = "Hip Hop SFX.mp3"
             #the following returns an np array (vector) representing one mp3 file
             frame_rate, channels, vector = self.transformData(f) #framerate is in milliseconds
-            filename = str(f)+ ".txt"
+
+            ##stores the audio vector in a file
+            #filename = str(f)+ ".txt"
             #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
-            self.playAudio(vector, frame_rate, channels)
+            
+            ##plays the audio
+            #self.playAudio(vector, frame_rate, channels)
             
         # else:
         #     print("Please install  ffmpeg for "+osys+". http://www.ffmpeg.org/download.html")
