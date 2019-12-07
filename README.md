@@ -32,6 +32,7 @@ https://stackoverflow.com/questions/53633177/  how-to-read-a-mp3-audio-file-into
   
 Additional Resources  
 https://blog.keras.io/building-autoencoders-in-keras.html - Variational AutoEncoder Example
+https://github.com/keras-team/keras/blob/master/examples/variational_autoencoder.py - Variational AutoEncoder Example (code)
 https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_collection_on_the_internet/  
 https://codepen.io/teropa/details/JLjXGK  
 https://github.com/tensorflow/magenta/tree/master/magenta/models/drums_rnn  
