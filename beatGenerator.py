@@ -32,7 +32,7 @@ class BEATGENERATOR(object):
         
         #normalizes elements and return
         #depending on what we use for our activation function, we may want to remove the zeroes and ones
-        return a.channels, np.float32(y)/2**15
+        return a.frame_rate, a.channels, np.float32(y)/2**15
     
     # writes quantified audio data to txt
     def writeFile(self, v, filename, folder):
@@ -65,11 +65,11 @@ class BEATGENERATOR(object):
                 #the following returns an np array (vector) representing one mp3 file.
                 # I believe each element represents audio data at one millisecond in the audio file
                 # but I am not entirely sure. 
-                channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
+                framte_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
                 filename = str(mp3_files[i])[9:] + ".txt"
                 self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
 
-                audio = self.toAudio(rate, vector, channels)
+                audio = self.toAudio(framte_rate, vector, channels)
 
         else:
             f = "Hip Hop SFX.mp3"
