@@ -1,6 +1,13 @@
 # Authors: Alexander Caines, Shep Sims, Andrew Taylor
 # Description: This file retrieves and preprocesses song data for beat generation
 
+import matplotlib.pyplot as plt
+import pandas
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error
 import pydub #allows for manipulation of audio
 import numpy as np
 import glob as gb # glob lists the files of a certain filetype in a folder specified by the programmer
