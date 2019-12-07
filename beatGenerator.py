@@ -9,6 +9,7 @@ from keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import pydub #allows for manipulation of audio
+from pydub.playback import play
 import numpy as np
 import glob as gb # glob lists the files of a certain filetype in a folder specified by the programmer
 import os
@@ -31,7 +32,7 @@ class BEATGENERATOR(object):
         
         #normalizes elements and return
         #depending on what we use for our activation function, we may want to remove the zeroes and ones
-        return np.float32(y)/2**15
+        return a.channels, np.float32(y)/2**15
     
     # writes quantified audio data to txt
     def writeFile(self, v, filename, folder):
@@ -42,7 +43,17 @@ class BEATGENERATOR(object):
             f.write(str(v[i]))
         f.close()
 
-
+    #transforms audio data back to audio
+    def toAudio(self, rate = 100, signal, channels = 2):
+        channel1 = signal[:,0]
+        audio_segment = pydub.AudioSegment(
+            channel1.tobytes(),
+            frame_rate = rate,
+            sample_width = channel1.dtype.itemsize,
+            channels = channels
+        )
+        return audio_segment
+        
     def main(self):
         # I (Alexander) am unsure if ffmpeg works differently on different operating systems. So to be safe, I'm deferring to working with Windows.
         # I will check later if this works on linux. If you wish to check if the program runs on a MAC, install ffmpeg off the site I linked in the
@@ -54,9 +65,11 @@ class BEATGENERATOR(object):
                 #the following returns an np array (vector) representing one mp3 file.
                 # I believe each element represents audio data at one millisecond in the audio file
                 # but I am not entirely sure. 
-                vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
+                channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
                 filename = str(mp3_files[i])[9:] + ".txt"
                 self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
+
+                audio = self.toAudio(rate, vector, channels)
 
         else:
             f = "Hip Hop SFX.mp3"
