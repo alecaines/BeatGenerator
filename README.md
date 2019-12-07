@@ -35,6 +35,7 @@ https://www.reddit.com/r/WeAreTheMusicMakers/comments/3ajwe4/the_largest_midi_co
 https://codepen.io/teropa/details/JLjXGK  
 https://github.com/tensorflow/magenta/tree/master/magenta/models/drums_rnn  
 https://arxiv.org/ftp/arxiv/papers/1804/1804.07300.pdf  
+https://blog.goodaudience.com/using-tensorflow-autoencoders-with-music-f871a76122ba  
 
 
 
