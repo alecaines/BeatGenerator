@@ -20,22 +20,19 @@ class BEATGENERATOR(object):
 
     # converts mp3 to numpy array
     def transformData(self, f):
+        
         #retrieves audio
         if type(f) != pydub.audio_segment.AudioSegment:
-            a = pydub.AudioSegment.from_mp3(file = f)
+            a = pydub.AudioSegment.from_mp3(file = f).set_channels(1)
         else:
             a = f
+            
         # converts mp3 data to numpy array
+        print("Channels: " , a.channels, "\nDuration: ", a.duration_seconds, "\nSample Width: " , a.sample_width, "\nFrame Width: " , a.frame_width)
         y = np.array(a.get_array_of_samples())
-        print(y.shape)
-        #not what exactly what the channels represents other than two arbitrary filters in an audio file
-        if a.channels == 2:
-            y = y.reshape((-1,2))
-
-        print(y.shape)
-        #normalizes elements and return
-        #depending on what we use for our activation function, we may want to remove the zeroes and ones
-        return a.frame_rate, a.channels, np.float32(y)/2**15
+        print(y[200])
+        
+        return a.frame_rate, a.channels, y
     
     # writes quantified audio data to txt
     def writeFile(self, v, filename, folder):
@@ -49,15 +46,14 @@ class BEATGENERATOR(object):
     #transforms audio data back to audio
     def toAudio(self, rate, signal, channels):
         print(signal.shape)
-        channel1 = signal[:,0]
-        channel2 = signal[:,1]
-        print(signal[:,0])
+##        channel1 = signal
+##        channel2 = signal[:,1]
         audio_segment = pydub.AudioSegment(
-            channel1.tobytes(),
+            signal.tobytes(),
             frame_rate = rate,
-            sample_width = channel1.dtype.itemsize,
+            sample_width = signal.dtype.itemsize,
             channels = channels
-        )
+        ) + 6
         return audio_segment
 
     def playAudio(self, audio_segment):
