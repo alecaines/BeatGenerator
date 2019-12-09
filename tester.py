@@ -126,6 +126,7 @@ class BEATGENERATOR(object):
 
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
+        Conv1D(original_dim, batch_size, activation = 'relu')(training_data)
         x = Dense(intermediate_dim, activation='relu')(inputs)
         z_mean = Dense(latent_dim, name='z_mean')(x)
         z_log_var = Dense(latent_dim, name='z_log_var')(x)
