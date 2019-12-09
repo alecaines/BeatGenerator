@@ -7,7 +7,7 @@ import numpy as np
 import glob as gb # glob lists the files of a certain filetype in a folder specified by the programmer
 import os
 
-from keras.layers import Lambda, Input, Dense
+from keras.layers import Lambda, Input, Dense, Concatenate
 from keras.models import Model
 from keras.datasets import mnist
 from keras.losses import mse, binary_crossentropy
@@ -61,18 +61,19 @@ class BEATGENERATOR(object):
     def playAudio(self, audio_segment):
         play(audio_segment)
 
-    def sampling(args):
+    def sampling(self, z_mean, z_log_var):
 ##    Reparameterization trick by sampling from an isotropic unit Gaussian.
 ##    # Arguments
 ##        args (tensor): mean and log of variance of Q(z|X)
 ##    # Returns
 ##        z (tensor): sampled latent vector
-        z_mean, z_log_var = args
-        batch = K.shape(z_mean)[1]
-        dim = K.int_shape(z_mean)[2]
+        print(len(z_mean))
+        print(len(z_log_var))
+        batch = K.shape(z_mean)[1][1]
+        dim = K.int_shape(z_mean)[1][2]
         # by default, random_normal has mean = 0 and std = 1.0
         epsilon = K.random_normal(shape=(batch, dim))
-        return [z_mean + K.exp(0.5 * z_log_var) * epsilon]
+        return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
     def main(self):
         if os.path.exists('../songs'):
@@ -116,13 +117,13 @@ class BEATGENERATOR(object):
         
         #Hyper Paramters for model: 
         original_dim = 264600 # currently set to 3s of audio
-        
         input_shape = (original_dim, )
         intermediate_dim = 512
         batch_size = 128
         latent_dim = 2
         epochs = 50
-        training_data = self.tensor
+        training_data = np.asarray(self.tensor)
+
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
         x = Dense(intermediate_dim, activation='relu')(inputs)
@@ -133,9 +134,10 @@ class BEATGENERATOR(object):
         # note that "output_shape" isn't necessary with the TensorFlow backend
         ###### MORE IMPORTANT NOTE - this next line of code blows up the shell with red ink. ############
 
-        z = Lambda(self.sampling)([self, z_mean, z_log_var])
-        #z = Lambda(self.sampling, output_shape=(latent_dim,))([self, z_mean, z_log_var])
-        
+        input_tensor = Concatenate(axis = -1)([z_mean, z_log_var])
+        # z = Lambda(self.sampling)([self,input_tensor])
+        z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')(self, z_mean, z_log_var)
+        # z = lambda z_mean, z_log_var: self.sampling
         # instantiate encoder model     
         encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
         encoder.summary()
@@ -164,7 +166,7 @@ class BEATGENERATOR(object):
         vae.summary()
 
         # Train the model:
-        vae.fit(x_train, epochs=epochs, batch_size=batch_size)
+        vae.fit(training_data, epochs=epochs, batch_size=batch_size)
         
 if __name__ == "__main__":
     BEATGENERATOR().main()
