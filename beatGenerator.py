@@ -10,8 +10,8 @@
 #from sklearn.metrics import mean_squared_error
 import pydub #allows for manipulation of audio
 from pydub.playback import play
-import tensorflow
-import keras
+import tensorflow as tf
+from tensorflow import keras
 from keras.layers import Input, Dense
 from keras.models import Model
 import numpy as np
@@ -59,6 +59,7 @@ class BEATGENERATOR(object):
         )
         return audio_segment
 
+    #plays a select audio file
     def playAudio(self, vector, frame_rate, channels):
         audio = self.toAudio(frame_rate, vector, channels)
         play(audio)

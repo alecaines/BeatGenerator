@@ -18,7 +18,7 @@ class BEATGENERATOR(object):
 
 
     def __init__(self):
-        pass
+        self.tensor = []
 
     # converts mp3 to numpy array
     def transformData(self, f):
@@ -30,9 +30,9 @@ class BEATGENERATOR(object):
             a = f
             
         # converts mp3 data to numpy array
-        print("Channels: " , a.channels, "\nDuration: ", a.duration_seconds, "\nSample Width: " , a.sample_width, "\nFrame Width: " , a.frame_width)
+##        print("Channels: " , a.channels, "\nDuration: ", a.duration_seconds, "\nSample Width: " , a.sample_width, "\nFrame Width: " , a.frame_width)
         y = np.array(a.get_array_of_samples())
-        print(y[200])
+##        print(y[200])
         
         return a.frame_rate, a.channels, y
     
@@ -47,7 +47,7 @@ class BEATGENERATOR(object):
 
     #transforms audio data back to audio
     def toAudio(self, rate, signal, channels):
-        print(signal.shape)
+##        print(signal.shape)
 ##        channel1 = signal
 ##        channel2 = signal[:,1]
         audio_segment = pydub.AudioSegment(
@@ -60,39 +60,32 @@ class BEATGENERATOR(object):
 
     def playAudio(self, audio_segment):
         play(audio_segment)
-        
 
-
-    def sampling(z_mean, z_log_var):
+    def sampling(args):
 ##    Reparameterization trick by sampling from an isotropic unit Gaussian.
 ##    # Arguments
 ##        args (tensor): mean and log of variance of Q(z|X)
 ##    # Returns
 ##        z (tensor): sampled latent vector
-
-        batch = K.shape(z_mean)[0]
-        dim = K.int_shape(z_mean)[1]
+        z_mean, z_log_var = args
+        batch = K.shape(z_mean)[1]
+        dim = K.int_shape(z_mean)[2]
         # by default, random_normal has mean = 0 and std = 1.0
         epsilon = K.random_normal(shape=(batch, dim))
-        return z_mean + K.exp(0.5 * z_log_var) * epsilon
+        return [z_mean + K.exp(0.5 * z_log_var) * epsilon]
 
     def main(self):
-        # I (Alexander) am unsure if ffmpeg works differently on different operating systems. So to be safe, I'm deferring to working with Windows.
-        # I will check later if this works on linux. If you wish to check if the program runs on a MAC, install ffmpeg off the site I linked in the
-        # else statement. After you have installed ffmpeg, replace 'Windows' with 'Darwin'
-        print(os.path.exists('../songs'))
-        if os.path.exists('../songs'): #for running on a windows machine
+        if os.path.exists('../songs'):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
-            
+            count = 0
             for i in range(len(mp3_files)):
-                #the following returns an np array (vector) representing one mp3 file.
-                # I believe each element represents audio data at one millisecond in the audio file
-                # but I am not entirely sure. 
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
-
+                self.tensor.append((frame_rate, channels, vector))
+                count+=1
+                print("loaded", str(count)+str("/")+str(len(mp3_files)))
                 #filename = str(mp3_files[i])[9:] + ".txt"
                 #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
-                self.playAudio(vector, frame_rate, channels)
+                #self.playAudio(vector, frame_rate, channels)
 
         else:
             f = "Hip Hop SFX.mp3"
@@ -121,18 +114,15 @@ class BEATGENERATOR(object):
             #self.playAudio(audio_decompressed2)
 
         
-        # else:
-        #     print("Please install  ffmpeg for "+osys+". http://www.ffmpeg.org/download.html")
-        #     print("Support for " + osys + " will be implemented soon")
-
         #Hyper Paramters for model: 
         original_dim = 264600 # currently set to 3s of audio
+        
         input_shape = (original_dim, )
         intermediate_dim = 512
         batch_size = 128
         latent_dim = 2
         epochs = 50
-
+        training_data = self.tensor
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
         x = Dense(intermediate_dim, activation='relu')(inputs)
@@ -141,13 +131,14 @@ class BEATGENERATOR(object):
 
         # use reparameterization trick to push the sampling out as input
         # note that "output_shape" isn't necessary with the TensorFlow backend
-    ###### MORE IMPORTANT NOTE - this next line of code blows up the shell with red ink. ############
-        z = Lambda(self.sampling, output_shape=(latent_dim,), name='z')([z_mean, z_log_var])
+        ###### MORE IMPORTANT NOTE - this next line of code blows up the shell with red ink. ############
 
+        z = Lambda(self.sampling)([self, z_mean, z_log_var])
+        #z = Lambda(self.sampling, output_shape=(latent_dim,))([self, z_mean, z_log_var])
+        
         # instantiate encoder model     
         encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
         encoder.summary()
-        #plot_model(encoder, to_file='vae_mlp_encoder.png', show_shapes=True)
 
         # build decoder model
         latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
@@ -157,7 +148,6 @@ class BEATGENERATOR(object):
         # instantiate decoder model
         decoder = Model(latent_inputs, outputs, name='decoder')
         decoder.summary()
-        #plot_model(decoder, to_file='vae_mlp_decoder.png', show_shapes=True)
 
         # instantiate VAE model
         outputs = decoder(encoder(inputs)[2])
