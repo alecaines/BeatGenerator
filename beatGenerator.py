@@ -20,7 +20,7 @@ import os
 
 class BEATGENERATOR(object):
     def __init__(self):
-        pass
+        self.tensor = []
 
     # converts mp3 to numpy array
     def transformData(self, f, t = 3):

@@ -61,16 +61,12 @@ class BEATGENERATOR(object):
     def playAudio(self, audio_segment):
         play(audio_segment)
 
-    def sampling(self, z_mean, z_log_var):
-##    Reparameterization trick by sampling from an isotropic unit Gaussian.
-##    # Arguments
-##        args (tensor): mean and log of variance of Q(z|X)
-##    # Returns
-##        z (tensor): sampled latent vector
-        print(len(z_mean))
-        print(len(z_log_var))
-        batch = K.shape(z_mean)[1][1]
-        dim = K.int_shape(z_mean)[1][2]
+    def sampling(self,args):
+        
+        z_mean, z_log_var = args
+
+        batch = K.shape(z_mean)[0]
+        dim = K.int_shape(z_mean)[1]
         # by default, random_normal has mean = 0 and std = 1.0
         epsilon = K.random_normal(shape=(batch, dim))
         return z_mean + K.exp(0.5 * z_log_var) * epsilon
@@ -126,7 +122,6 @@ class BEATGENERATOR(object):
 
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
-        Conv1D(original_dim, batch_size, activation = 'relu')(training_data)
         x = Dense(intermediate_dim, activation='relu')(inputs)
         z_mean = Dense(latent_dim, name='z_mean')(x)
         z_log_var = Dense(latent_dim, name='z_log_var')(x)
@@ -137,7 +132,7 @@ class BEATGENERATOR(object):
 
         input_tensor = Concatenate(axis = -1)([z_mean, z_log_var])
         # z = Lambda(self.sampling)([self,input_tensor])
-        z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')(self, z_mean, z_log_var)
+        z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')([z_mean, z_log_var])
         # z = lambda z_mean, z_log_var: self.sampling
         # instantiate encoder model     
         encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
