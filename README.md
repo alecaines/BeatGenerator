@@ -31,6 +31,7 @@ https://stackoverflow.com/questions/53633177/  how-to-read-a-mp3-audio-file-into
 (installing ffmpeg) https://www.youtube.com/watch?v=w1q7POTlJeY    
   
 Additional Resources  
+https://www.one-tab.com/page/WB4AxkPYQtuSG4UeNKEAMw
 https://nips2017creativity.github.io/doc/Hierarchical_Variational_Autoencoders_for_Music.pdf  
 https://keras.io/examples/variational_autoencoder/  
 https://blog.keras.io/building-autoencoders-in-keras.html - Variational AutoEncoder Example
