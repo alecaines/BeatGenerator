@@ -18,7 +18,9 @@ class BEATGENERATOR(object):
 
 
     def __init__(self):
-        self.tensor = []
+        self.tensor = np.array([])
+        self.frame_rates = np.array([])
+        self.channels = np.array([])
 
     # converts mp3 to numpy array
     def transformData(self, f):
@@ -77,13 +79,14 @@ class BEATGENERATOR(object):
             count = 0
             for i in range(len(mp3_files)):
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
-                self.tensor.append((frame_rate, channels, vector))
+                np.append(self.tensor, vector)
+                np.append(self.frame_rates, frame_rate)
+                np.append(self.channels, channels)
                 count+=1
                 print("loaded", str(count)+str("/")+str(len(mp3_files)))
                 #filename = str(mp3_files[i])[9:] + ".txt"
                 #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
                 #self.playAudio(vector, frame_rate, channels)
-
         else:
             f = "Hip Hop SFX.mp3"
             #the following returns an np array (vector) representing one mp3 file
@@ -112,13 +115,13 @@ class BEATGENERATOR(object):
 
         
         #Hyper Paramters for model: 
-        original_dim = 264600 # currently set to 3s of audio
+        original_dim = 1 #3 #264600 # currently set to 3s of audio
         input_shape = (original_dim, )
         intermediate_dim = 512
         batch_size = 128
         latent_dim = 2
         epochs = 50
-        training_data = np.asarray(self.tensor)
+        training_data = self.tensor
 
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
@@ -162,7 +165,7 @@ class BEATGENERATOR(object):
         vae.summary()
 
         # Train the model:
-        vae.fit(training_data, epochs=epochs, batch_size=batch_size)
+        vae.fit(x =training_data, epochs=epochs, batch_size=batch_size)
         
 if __name__ == "__main__":
     BEATGENERATOR().main()
