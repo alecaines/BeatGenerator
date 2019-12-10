@@ -36,7 +36,7 @@ class BEATGENERATOR(object):
         y = np.array(a.get_array_of_samples())
 ##        print(y[200])
         
-        return a.frame_rate, a.channels, y
+        return a.frame_rate, a.channels, np.float32(y)/2**15
     
     # writes quantified audio data to txt
     def writeFile(self, v, filename, folder):
@@ -120,7 +120,7 @@ class BEATGENERATOR(object):
         intermediate_dim = 512
         batch_size = 128
         latent_dim = 2
-        epochs = 50
+        epochs = 3
         training_data = self.tensor
         print(type(self.tensor))
         print(len(self.tensor))
@@ -133,8 +133,6 @@ class BEATGENERATOR(object):
 
         # use reparameterization trick to push the sampling out as input
         # note that "output_shape" isn't necessary with the TensorFlow backend
-        ###### MORE IMPORTANT NOTE - this next line of code blows up the shell with red ink. ############
-
         input_tensor = Concatenate(axis = -1)([z_mean, z_log_var])
         # z = Lambda(self.sampling)([self,input_tensor])
         z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')([z_mean, z_log_var])
