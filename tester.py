@@ -79,9 +79,9 @@ class BEATGENERATOR(object):
             count = 0
             for i in range(len(mp3_files)):
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
-                np.append(self.tensor, vector)
-                np.append(self.frame_rates, frame_rate)
-                np.append(self.channels, channels)
+                self.tensor = np.append(self.tensor, vector)
+                self.frame_rates = np.append(self.frame_rates, frame_rate)
+                self.channels = np.append(self.channels, channels)
                 count+=1
                 print("loaded", str(count)+str("/")+str(len(mp3_files)))
                 #filename = str(mp3_files[i])[9:] + ".txt"
@@ -122,7 +122,9 @@ class BEATGENERATOR(object):
         latent_dim = 2
         epochs = 50
         training_data = self.tensor
-
+        print(type(self.tensor))
+        print(len(self.tensor))
+        print(self.tensor[0])
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
         x = Dense(intermediate_dim, activation='relu')(inputs)
@@ -137,6 +139,7 @@ class BEATGENERATOR(object):
         # z = Lambda(self.sampling)([self,input_tensor])
         z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')([z_mean, z_log_var])
         # z = lambda z_mean, z_log_var: self.sampling
+        
         # instantiate encoder model     
         encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
         encoder.summary()
