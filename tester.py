@@ -78,13 +78,13 @@ class BEATGENERATOR(object):
     def display_results(model, data, batch_size = 128):
         filename = str(datetime.datetiem.now)
         encoder, decoder = model
-        x_test, y_test = data
+        x_test = data
 
         z_mean, _, _ = encoder.predict(x_test, batch_size = batch_size)
 
         # displays something about the latent space
         plt.figure()
-        plt.scatter(z_mean[:0], z_mean[:,1], c = y_test)
+        plt.scatter(z_mean[:,0], z_mean[:,1], c = y_test)
         plt.colorbar()
         plt.xlabel("z[0]")
         plt.ylabel("z[1]")
@@ -95,7 +95,8 @@ class BEATGENERATOR(object):
         if os.path.exists('../songs'):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
-            for i in range(len(mp3_files)):
+            #for i in range(len(mp3_files)):
+            for i in range(5):
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
                 self.tensor = np.append(self.tensor, vector)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
@@ -188,7 +189,7 @@ class BEATGENERATOR(object):
         vae.summary()
 
         #show results
-        display_results(vae, training_data)
+        self.display_results(vae, training_data)
         
 if __name__ == "__main__":
     BEATGENERATOR().main()
