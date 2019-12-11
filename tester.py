@@ -202,6 +202,9 @@ class BEATGENERATOR(object):
         audio = self.toAudio(self.frame_rates[0], prediction, 1) #get this to work for each element in the training set
         self.playAudio(audio)
         
+        ##store audio
+        #filename = str(datetime.datetime.now)+".mp3"
+        #audio.export(filename, format = "mp3")
         
 if __name__ == "__main__":
     BEATGENERATOR().main()
