@@ -32,7 +32,8 @@ class BEATGENERATOR(object):
             a = pydub.AudioSegment.from_mp3(file = f).set_channels(1)
         else:
             a = f
-            
+        if a.channels == 2:
+            y = y.reshape((-1,2))
         # converts mp3 data to numpy array
 ##        print("Channels: " , a.channels, "\nDuration: ", a.duration_seconds, "\nSample Width: " , a.sample_width, "\nFrame Width: " , a.frame_width)
         y = np.array(a.get_array_of_samples())
@@ -192,7 +193,7 @@ class BEATGENERATOR(object):
         vae.fit(x =training_data, epochs=epochs, batch_size=batch_size)
         vae.summary()
 
-        #predict/generate
+        #generate
         prediction = (2**15)*(vae.predict(x = training_data, batch_size = batch_size))
         print(type(prediction))
         print(len(prediction))
@@ -200,11 +201,10 @@ class BEATGENERATOR(object):
 
         #results
         audio = self.toAudio(self.frame_rates[0], prediction, 1) #get this to work for each element in the training set
-        self.playAudio(audio)
         
-        ##store audio
-        #filename = str(datetime.datetime.now)+".mp3"
-        #audio.export(filename, format = "mp3")
+        #store audio
+        filename = str(datetime.datetime.now)+".mp3"
+        audio.export("generated_music.mp3", format = "mp3")
         
 if __name__ == "__main__":
     BEATGENERATOR().main()
