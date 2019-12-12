@@ -24,6 +24,11 @@ class BEATGENERATOR(object):
         self.frame_rates = np.array([])
         self.channels = np.array([])
 
+        #lists can hold other lists of inconsistent dimensions as elements whereas numpy arrays cannot
+        #self.tensor = []
+        #self.frame_rates = []
+        #self.channels = []
+
     # converts mp3 to numpy array
     def transformData(self, f):
         
@@ -37,7 +42,10 @@ class BEATGENERATOR(object):
         # converts mp3 data to numpy array
         y = np.array(a.get_array_of_samples())
 
-        
+        #normalizes data and puts it into an np array
+        #y = np.array(list(map(lambda x:x/(2**15), a.get_array_of_samples())))
+
+        #return a.frame_rate, a.channels, y
         return a.frame_rate, a.channels, np.float32(y)/2**15
     
     # writes quantified audio data to txt
@@ -80,8 +88,15 @@ class BEATGENERATOR(object):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
             #for i in range(len(mp3_files)): #uncomment for submission
-            for i in range(3): #for testing
+            for i in range(2): #for testing
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
+
+                #list implementation
+                #self.tensor.append(vector)
+                #self.frame_rates.append(frame_rate)
+                #self.channels.append(channels)
+
+                #nparray implementation
                 self.tensor = np.append(self.tensor, vector, axis = 0)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
                 self.channels = np.append(self.channels, channels)
