@@ -35,7 +35,7 @@ class BEATGENERATOR(object):
         if a.channels == 2:
             y = y.reshape((-1,2))
         # converts mp3 data to numpy array
-         y = np.array([a.get_array_of_samples()])
+        y = np.array(a.get_array_of_samples())
 
         
         return a.frame_rate, a.channels, np.float32(y)/2**15
@@ -79,8 +79,8 @@ class BEATGENERATOR(object):
         if os.path.exists('../songs'):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
-            for i in range(len(mp3_files)): #uncomment for submission
-            #for i in range(1): #for testing
+            #for i in range(len(mp3_files)): #uncomment for submission
+            for i in range(3): #for testing
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
                 self.tensor = np.append(self.tensor, vector, axis = 0)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
