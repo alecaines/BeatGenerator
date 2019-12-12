@@ -35,9 +35,8 @@ class BEATGENERATOR(object):
         if a.channels == 2:
             y = y.reshape((-1,2))
         # converts mp3 data to numpy array
-##        print("Channels: " , a.channels, "\nDuration: ", a.duration_seconds, "\nSample Width: " , a.sample_width, "\nFrame Width: " , a.frame_width)
-        y = np.array(a.get_array_of_samples())
-##        print(y[200])
+         y = np.array([a.get_array_of_samples()])
+
         
         return a.frame_rate, a.channels, np.float32(y)/2**15
     
@@ -75,35 +74,15 @@ class BEATGENERATOR(object):
         # by default, random_normal has mean = 0 and std = 1.0
         epsilon = K.random_normal(shape=(batch, dim))
         return z_mean + K.exp(0.5 * z_log_var) * epsilon
-
-##    def play_results(self, model, data, batch_size = 128):
-##        filename = str(datetime.datetime.now)
-##        encoder, decoder = model
-##        x_test = data
-##
-##        z_mean, _, _ = encoder.predict(x_test, batch_size = batch_size)
-##
-##        # displays something about the latent space
-##        plt.figure()
-##        plt.scatter(z_mean[:,0], z_mean[:,1], c = y_test)
-##        plt.colorbar()
-##        plt.xlabel("z[0]")
-##        plt.ylabel("z[1]")
-##        plt.savefig(filename)
-##        plt.show()
-##
-##        ##return and play audio
-##        #audio = decoder.predict()
-##        #playAudio(audio)
         
     def main(self):
         if os.path.exists('../songs'):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
-            #for i in range(len(mp3_files)): #uncomment for submission
-            for i in range(1): #for testing
+            for i in range(len(mp3_files)): #uncomment for submission
+            #for i in range(1): #for testing
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
-                self.tensor = np.append(self.tensor, vector)
+                self.tensor = np.append(self.tensor, vector, axis = 0)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
                 self.channels = np.append(self.channels, channels)
                 count+=1
@@ -119,26 +98,11 @@ class BEATGENERATOR(object):
             self.frame_rates = np.append(self.frame_rates, frame_rate)
             self.channels = np.append(self.channels, channels)
             filename = str(f)+ "test.txt"
-            #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
 
-            #original_dim = len(vector)
-            #x_train = vector
-            #x_test = vector
-
-            #input_shape = (original_dim,)
-            #intermediate_dim = 512
-            #batch_size = 128
-            #latent_dim = 2
-            #epochs = 50
-
-            #inputs = Input(shape=input_shape, name="encoder_input")
-            #x = Dense(intermediate_dim, activation="relu")(inputs)
             
             audio_decompressed = self.toAudio(frame_rate, vector,channels)
             frame_rate2, channels2, vector2 = self.transformData(audio_decompressed)
             audio_decompressed2 = self.toAudio(frame_rate2, vector2,channels2)
-            #self.playAudio(audio_decompressed)
-            #self.playAudio(audio_decompressed2)
 
         
         #Hyper Paramters for model: 
@@ -161,9 +125,9 @@ class BEATGENERATOR(object):
         # use reparameterization trick to push the sampling out as input
         # note that "output_shape" isn't necessary with the TensorFlow backend
         input_tensor = Concatenate(axis = -1)([z_mean, z_log_var])
-        # z = Lambda(self.sampling)([self,input_tensor])
+
         z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')([z_mean, z_log_var])
-        # z = lambda z_mean, z_log_var: self.sampling
+
         
         # instantiate encoder model     
         encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
