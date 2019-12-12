@@ -115,6 +115,9 @@ class BEATGENERATOR(object):
             f = "Hip Hop SFX.mp3"
             #the following returns an np array (vector) representing one mp3 file
             frame_rate, channels, vector = self.transformData(f) #framerate is in milliseconds
+            self.tensor = np.append(self.tensor, vector)
+            self.frame_rates = np.append(self.frame_rates, frame_rate)
+            self.channels = np.append(self.channels, channels)
             filename = str(f)+ "test.txt"
             #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
 
