@@ -2,6 +2,7 @@
 # Description: This file retrieves and preprocesses song data for beat generation
 
 import datetime
+import tensorflow as tf 
 import matplotlib.pyplot as plt
 import pydub #allows for manipulation of audio
 from pydub.playback import play
@@ -20,9 +21,15 @@ class BEATGENERATOR(object):
 
 
     def __init__(self):
-        self.tensor = np.array([])
-        self.frame_rates = np.array([])
+        self.tensor = np.array([]) # ndmin = 2) #Creates a 2D array where each row would represent 1 input song
+        self.frame_rates = np.array([]) # Frame_rates and channels would remain as 1D arrays, where each index is an input song.
         self.channels = np.array([])
+
+        # tf.Tensor version:
+        #self.tensor = tf.constant([])
+        # Also tf.stack() might work for self.tensor. 
+        #self.frame_rates = tf.constant([])
+        #self.channels = tf.constant([])
 
         #lists can hold other lists of inconsistent dimensions as elements whereas numpy arrays cannot
         #self.tensor = []
@@ -39,14 +46,18 @@ class BEATGENERATOR(object):
             a = f
         if a.channels == 2:
             y = y.reshape((-1,2))
-        # converts mp3 data to numpy array
-        y = np.array(a.get_array_of_samples())
 
-        #normalizes data and puts it into an np array
+        # converts mp3 data to numpy array
+        y = np.array(a.get_array_of_samples()) #, ndmin = 2)
+        y = np.float32(y)/2**15
+        
+        # tf.Tensor version:
+        #y = tf.convert_to_tensor(y, dtype = tf.float32)
+        
+        #normalizes data and puts it into an np array:
         #y = np.array(list(map(lambda x:x/(2**15), a.get_array_of_samples())))
 
-        #return a.frame_rate, a.channels, y
-        return a.frame_rate, a.channels, np.float32(y)/2**15
+        return a.frame_rate, a.channels, y
     
     # writes quantified audio data to txt
     def writeFile(self, v, filename, folder):
@@ -87,19 +98,28 @@ class BEATGENERATOR(object):
         if os.path.exists('../songs'):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
+            #print(mp3_files)
             #for i in range(len(mp3_files)): #uncomment for submission
             for i in range(2): #for testing
+                print("count: ", count)
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
+                input_length = len(vector)
 
                 #list implementation
                 #self.tensor.append(vector)
                 #self.frame_rates.append(frame_rate)
                 #self.channels.append(channels)
 
-                #nparray implementation
+                #nparray implementation:
                 self.tensor = np.append(self.tensor, vector, axis = 0)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
                 self.channels = np.append(self.channels, channels)
+
+                #Tensor implementation:
+                #self.tensor = tf.concat(self.tensor, vector, axis = 0)
+                #self.frame_rates = tf.concat(self.frame_rates, frame_rate)
+                #self.channels = tf.concat(self.channels, channels)
+                
                 count+=1
                 print("loaded", str(count)+str("/")+str(len(mp3_files)))
                 #filename = str(mp3_files[i])[9:] + ".txt"
@@ -112,7 +132,7 @@ class BEATGENERATOR(object):
             self.tensor = np.append(self.tensor, vector)
             self.frame_rates = np.append(self.frame_rates, frame_rate)
             self.channels = np.append(self.channels, channels)
-            filename = str(f)+ "test.txt"
+            #filename = str(f)+ "test.txt"
 
             
             audio_decompressed = self.toAudio(frame_rate, vector,channels)
@@ -129,7 +149,8 @@ class BEATGENERATOR(object):
         epochs = 1
         training_data = self.tensor
         print(type(self.tensor))
-        print(len(self.tensor))
+        print("length of input: ", len(self.tensor))
+        print("Lengh of 1 song: ", input_length)
         print(self.tensor[0])
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
@@ -138,7 +159,6 @@ class BEATGENERATOR(object):
         z_log_var = Dense(latent_dim, name='z_log_var')(x)
 
         # use reparameterization trick to push the sampling out as input
-        # note that "output_shape" isn't necessary with the TensorFlow backend
         input_tensor = Concatenate(axis = -1)([z_mean, z_log_var])
 
         z = Lambda(self.sampling, output_shape=(latent_dim,), name = 'z')([z_mean, z_log_var])
@@ -169,14 +189,18 @@ class BEATGENERATOR(object):
         vae_loss = K.mean(reconstruction_loss + kl_loss)
         vae.add_loss(vae_loss)
         vae.compile(optimizer='adam')
+        print("here0")
         vae.summary()
 
         # Train the model:
+        # Need to seperate out separate songs in the input.
         vae.fit(x =training_data, epochs=epochs, batch_size=batch_size)
+        print("here1")
         vae.summary()
 
         #generate
         prediction = (2**15)*(vae.predict(x = training_data, batch_size = batch_size))
+        print("here2")
         print(type(prediction))
         print(len(prediction))
         print(prediction)
