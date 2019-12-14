@@ -48,8 +48,9 @@ class BEATGENERATOR(object):
             y = y.reshape((-1,2))
 
         # converts mp3 data to numpy array
-        y = np.array(a.get_array_of_samples()) #, ndmin = 2)
-        y = np.float32(y)/2**15
+        y = list(map(lambda x:x/2**15, a.get_array_of_samples()))
+        #y = np.array(a.get_array_of_samples()) #, ndmin = 2)
+        #y = np.float32(y)/2**15
         
         # tf.Tensor version:
         #y = tf.convert_to_tensor(y, dtype = tf.float32)
@@ -99,32 +100,14 @@ class BEATGENERATOR(object):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
             #print(mp3_files)
-            #for i in range(len(mp3_files)): #uncomment for submission
-            for i in range(2): #for testing
-                print("count: ", count)
+            for i in range(len(mp3_files)): #uncomment for submission
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
-                input_length = len(vector)
-
-                #list implementation
-                #self.tensor.append(vector)
-                #self.frame_rates.append(frame_rate)
-                #self.channels.append(channels)
-
-                #nparray implementation:
-                self.tensor = np.append(self.tensor, vector, axis = 0)
+                self.tensor = np.append(self.tensor, vector)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
                 self.channels = np.append(self.channels, channels)
-
-                #Tensor implementation:
-                #self.tensor = tf.concat(self.tensor, vector, axis = 0)
-                #self.frame_rates = tf.concat(self.frame_rates, frame_rate)
-                #self.channels = tf.concat(self.channels, channels)
-                
                 count+=1
                 print("loaded", str(count)+str("/")+str(len(mp3_files)))
-                #filename = str(mp3_files[i])[9:] + ".txt"
-                #self.writeFile(vector, filename, "../vectorizedAudio") #should be a global array
-                #self.playAudio(vector, frame_rate, channels)
+                
         else:
             f = "Hip Hop SFX.mp3"
             #the following returns an np array (vector) representing one mp3 file
@@ -141,17 +124,14 @@ class BEATGENERATOR(object):
 
         
         #Hyper Paramters for model: 
-        original_dim = 1 #3 #264600 # currently set to 3s of audio
+        original_dim = 1 #7570944 #3 #264600 # currently set to 3s of audio
         input_shape = (original_dim, )
         intermediate_dim = 512
         batch_size = 128
         latent_dim = 2
-        epochs = 1
+        epochs = 500
         training_data = self.tensor
-        print(type(self.tensor))
-        print("length of input: ", len(self.tensor))
-        print("Lengh of 1 song: ", input_length)
-        print(self.tensor[0])
+
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
         x = Dense(intermediate_dim, activation='relu')(inputs)
@@ -194,12 +174,15 @@ class BEATGENERATOR(object):
 
         # Train the model:
         # Need to seperate out separate songs in the input.
-        vae.fit(x =training_data, epochs=epochs, batch_size=batch_size)
+        log_dir="../logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, write_graph = True ,write_grads = True, histogram_freq = 1)
+        vae.fit(x =training_data[:28], epochs=epochs, batch_size=batch_size, callbacks = [tensorboard_callback])
         print("here1")
         vae.summary()
 
         #generate
-        prediction = (2**15)*(vae.predict(x = training_data, batch_size = batch_size))
+        prediction = (2**15)*(vae.predict(x = training_data[28:], batch_size = batch_size))
         print("here2")
         print(type(prediction))
         print(len(prediction))

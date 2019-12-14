@@ -7,7 +7,10 @@ Shep Sims, Andrew Taylor, Alexander Caines
 In order to run the model, ffmpeg must be installed on the system. For Windows machines, this video https://www.youtube.com/watch?v=w1q7POTlJeY provides clear instructions for installing ffmpeg. The builds for all machines can be found  at http://www.ffmpeg.org/download.html but the necessary preparations for linux and mac are unknown to me (Alexander Caines).
 
 ## Running the program
-To run the program, navigate to the directory the git remote repository is located in and type python tester.py in the terminal. The result of the training will be saved to an mp3 file called generated_music.mp3. Make sure that in the directory above the git repository, there is a folder called songs. We provide a training set of 33 songs in a zipped folder called 'songs' that we recommend for training.
+Clone the code from the master branch. To run the program, navigate to the directory the git remote repository is located in and type python tester.py in the terminal. The result of the training will be saved to an mp3 file called generated_music.mp3. Make sure that in the directory above the git repository, there is a folder called songs. We provide a training set of 33 songs in a zipped folder with the submission called 'songs' that we recommend for training.
+
+## Lambdas branch
+The lambdas branch contains a cleaner training datset than the main branch. However, the dimensionality of each input is large enough for python to kill the model during training. 
 
 ## Objective
 The objective of this project create a generative model for songs given a certain genre. Specifically, we wish to generate beats typically used by rappers during production. The project was deemed feasible as there exist a myriad of published papers and individual projects concerning the matter over a variety of different genres. We are not interested in producing symphonic or drawn-ought instrumentals. Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters.
