@@ -44,8 +44,8 @@ class BEATGENERATOR(object):
             a = pydub.AudioSegment.from_mp3(file = f).set_channels(1)
         else:
             a = f
-        if a.channels == 2:
-            y = y.reshape((-1,2))
+        # if a.channels == 2:
+        #     y = y.reshape((-1,2))
 
         # converts mp3 data to numpy array
         y = list(map(lambda x:x/2**15, a.get_array_of_samples()))
@@ -100,14 +100,17 @@ class BEATGENERATOR(object):
             mp3_files = gb.glob('../songs/*.mp3') #list of mp3 file addresses in a folder called songs sitting outside of this directory
             count = 0
             #print(mp3_files)
+            data = []
             for i in range(len(mp3_files)): #uncomment for submission
                 frame_rate, channels, vector = self.transformData(mp3_files[i]) #Note, the framerate is in milliseconds
-                self.tensor = np.append(self.tensor, vector)
+                data.append(vector)
                 self.frame_rates = np.append(self.frame_rates, frame_rate)
                 self.channels = np.append(self.channels, channels)
                 count+=1
                 print("loaded", str(count)+str("/")+str(len(mp3_files)))
-                
+            minn = min(list(map(lambda datum: len(datum), data))) #finds the min size
+            data = list(map(lambda datum: datum[:minn], data))
+            self.tensor = np.array(data)  
         else:
             f = "Hip Hop SFX.mp3"
             #the following returns an np array (vector) representing one mp3 file
@@ -124,7 +127,7 @@ class BEATGENERATOR(object):
 
         
         #Hyper Paramters for model: 
-        original_dim = 1 #7570944 #3 #264600 # currently set to 3s of audio
+        original_dim = 238464#1 #7570944 #3 #264600 # currently set to 3s of audio
         input_shape = (original_dim, )
         intermediate_dim = 512
         batch_size = 128
@@ -174,10 +177,10 @@ class BEATGENERATOR(object):
 
         # Train the model:
         # Need to seperate out separate songs in the input.
-        log_dir="../logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        #log_dir="../logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, write_graph = True ,write_grads = True, histogram_freq = 1)
-        vae.fit(x =training_data[:28], epochs=epochs, batch_size=batch_size, callbacks = [tensorboard_callback])
+        #tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, write_graph = True ,write_grads = True, histogram_freq = 1)
+        vae.fit(x =training_data[:28], epochs=epochs, batch_size=batch_size)#, callbacks = [tensorboard_callback])
         print("here1")
         vae.summary()
 
