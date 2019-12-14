@@ -2,14 +2,18 @@
 ## Authors
 Shep Sims, Andrew Taylor, Alexander Caines 
 
-## Objective
-The objective of this project create a generative model for songs given a certain genre. Specifically, we wish to generate beats typically used by rappers during production. The project was deemed feasible as there exist a myriad of published papers and individual projects concerning the matter over a variety of different genres. We are not interested in producing symphonic or drawn-ought instrumentals. Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters.
-
-## Model
-After reviewing different papers on music generation, we found that the most commonly used networks were long short term memory, generative adversarial networks, and recurrent neural networks. The models that seemed to yield the highest precision and accuracy (given the objectives set out by the individual researchers) were CNN’s and different variations of LSTM’s. These networks, however, were used to generate--as we mentioned before--sound-bytes that falls under the same genre as symphonic music. Because of the relatively small length of the sound-bytes and their desired highly repetitive nature, we will set out to implement a canonical recurrent neural net. We will use Tensorflow as the framework for implementing the model.
 
 ## Preparing Environment
 In order to run the model, ffmpeg must be installed on the system. For Windows machines, this video https://www.youtube.com/watch?v=w1q7POTlJeY provides clear instructions for installing ffmpeg. The builds for all machines can be found  at http://www.ffmpeg.org/download.html but the necessary preparations for linux and mac are unknown to me (Alexander Caines).
+
+## Running the program
+To run the program, navigate to the directory the git remote repository is located in and type python tester.py in the terminal. The result of the training will be saved to an mp3 file called generated_music.mp3. Make sure that in the directory above the git repository, there is a folder called songs. We provide a training set of 33 songs in a zipped folder called 'songs' that we recommend for training.
+
+## Objective
+The objective of this project create a generative model for songs given a certain genre. Specifically, we wish to generate beats typically used by rappers during production. The project was deemed feasible as there exist a myriad of published papers and individual projects concerning the matter over a variety of different genres. We are not interested in producing symphonic or drawn-ought instrumentals. Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters.
+
+## Target Function
+The appropriate target function for this project would be a sound byte from an ideal instrument’s lick. The methodology of the lick would revolve around comparing the original input and the predicted output. The extent to which style transfer was a success determines the accuracy of the model.
 
 ## Libraries
 Because pydub allows for transformation and partitioning of audio files, we use it for data-processing.
@@ -43,6 +47,3 @@ https://arxiv.org/ftp/arxiv/papers/1804/1804.07300.pdf
 https://blog.goodaudience.com/using-tensorflow-autoencoders-with-music-f871a76122ba  
 
 
-
-## Target Function
-The appropriate target function for this project would be a sound byte from an ideal instrument’s lick. The methodology of the lick would revolve around comparing the original input and the predicted output. The extent to which style transfer was a success determines the accuracy of the model.
