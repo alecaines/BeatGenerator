@@ -21,7 +21,7 @@ To run the program, open a fresh terminal window and navigate to the directory w
 ## Target Function
    The target function for this project would be a sound byte from an ideal instrument’s lick. The methodology of the lick would revolve around comparing the original input and the predicted output. The extent to which style transfer was a success determines the accuracy of the model.
    
-   #New but check me on this
+   # New but check me on this
    Autoencoder models generally attempt to reconstruct input examples as output.  Here, the target function attempts this by measuring the difference between the encoded input audio and output, and aims to minimize this reconstruction error.  
 
 ## Libraries
@@ -48,7 +48,9 @@ For our loss function we choose to use mean squared error as this allows for rel
 
 Our model implements a random noise seed in the encoding process to create variance in the latent representation before being fed into the decoder. This noise vector is created by sampling the distribution of the data at the output of the encoder layer, which is commonly referred to as the "bottleneck" as it is the point at which the minimum representation of the input lies. In sampling the bottleneck we determine the probability distribution by calculating the average value and the log variance of the bottlenecked representation.  We then 
 
-HERE’S WHERE WE NEED TO TALK ABOUT THE KL_LOSS TERM. OUR CODE THEN DEFINES A “VAE_LOSS” THAT EQUALS “K.mean(reconstruction_loss + kl_loss)”. This combined loss then gets added to the vae in line 190: vae.add_loss(vae_loss). I’m not sure how to talk about the meaning/reasoning of combining these two loss functions.   
+The loss incurred by a variational autoencoder contains two components: the reconstruction loss and a variable called the kl loss. The reconstruction loss is a measure of difference between the input data and the latent representation. The more different the input data is from the latent representation, the higher the loss. The more similar, the lower hte loss. KL loss was modeled after Kullback-Leibler divergence. KL divergence measures how much two probability distributions diverge from each other. Note that in the implemenation,  
+kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)  
+Note that the terms of kl_loss are the variance and mean of the input data. These are terms that are essential to determining the probability distribution of the input and comparing it to that of the latent representation. In the case of the model, it determines how far the distribution of the input data is skewed from the representation in the latent space. 
 
 ## Sources:
 Libraries  
@@ -62,7 +64,7 @@ https://stackoverflow.com/questions/53633177/  how-to-read-a-mp3-audio-file-into
 (some pydub) https://www.youtube.com/watch?v=4E7N7W1lUkU  
 (installing ffmpeg) https://www.youtube.com/watch?v=w1q7POTlJeY    
   
-Additional Resources  
+## Additional Resources  
 https://www.one-tab.com/page/WB4AxkPYQtuSG4UeNKEAMw
 https://nips2017creativity.github.io/doc/Hierarchical_Variational_Autoencoders_for_Music.pdf  
 https://keras.io/examples/variational_autoencoder/  
