@@ -24,8 +24,8 @@ class BEATGENERATOR(object):
         self.tensor = np.array([]) # ndmin = 2) #Creates a 2D array where each row would represent 1 input song
         self.frame_rates = np.array([]) # Frame_rates and channels would remain as 1D arrays, where each index is an input song.
         self.channels = np.array([])
-        self.original_dim = 9000
-        self.epochs = 10000
+        self.sample_size = 90000
+        self.epochs = 500
         self.intermediate_dim = 512
         self.batch_size = 128
         self.latent_dim = 2
@@ -39,7 +39,7 @@ class BEATGENERATOR(object):
         else:
             a = f
 
-        samples = a.get_array_of_samples()[:self.original_dim]
+        samples = a.get_array_of_samples()[:self.sample_size]
         # converts mp3 data to numpy array
         y = list(map(lambda sample:sample/2**15,samples))
         
@@ -109,8 +109,8 @@ class BEATGENERATOR(object):
 
         
         #Hyper Paramters for model: 
-        original_dim = self.original_dim #238464#1 #7570944 #3 #264600 # currently set to 3s of audio
-        input_shape = (original_dim, )
+        sample_size = self.sample_size #238464#1 #7570944 #3 #264600 # currently set to 3s of audio
+        input_shape = (sample_size, )
         intermediate_dim = self.intermediate_dim
         batch_size = self.batch_size
         latent_dim = self.latent_dim
@@ -141,7 +141,7 @@ class BEATGENERATOR(object):
         x = Dense(intermediate_dim, activation='relu')(latent_inputs)
         x = Dense(intermediate_dim, activation='relu')(x)
         x = Dense(intermediate_dim, activation='relu')(x)
-        outputs = Dense(original_dim, activation='sigmoid')(x)
+        outputs = Dense(sample_size, activation='sigmoid')(x)
 
         # instantiate decoder model
         decoder = Model(latent_inputs, outputs, name='decoder')
@@ -152,14 +152,13 @@ class BEATGENERATOR(object):
         vae = Model(inputs, outputs, name='vae_mlp')
 
         reconstruction_loss = mse(inputs, outputs)
-        reconstruction_loss *= original_dim
+        reconstruction_loss *= sample_size
         kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
         kl_loss = K.sum(kl_loss, axis=-1)
         kl_loss *= -0.5
         vae_loss = K.mean(reconstruction_loss + kl_loss)
         vae.add_loss(vae_loss)
         vae.compile(optimizer='adam')
-        print("here0")
         vae.summary()
 
         # Train the model:
@@ -168,12 +167,10 @@ class BEATGENERATOR(object):
 
         #tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, write_graph = True ,write_grads = True, histogram_freq = 1)
         vae.fit(x =training_data, epochs=epochs, batch_size=batch_size)#, callbacks = [tensorboard_callback])
-        print("here1")
         vae.summary()
 
         #generate
         prediction = (2**15)*(vae.predict(x = testing_data, batch_size = batch_size))
-        print("here2")
         print(type(prediction))
         print(len(prediction))
         print(prediction)
