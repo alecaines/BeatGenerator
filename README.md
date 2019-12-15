@@ -15,7 +15,9 @@ Rap beats often are short samples of “licks” from different individual instr
 
 ## Running the program
 
-   Clone the code from the master branch to a directory. Make sure that in the directory above the cloned repository there is a folder called songs containing inputs. We provide a training set of 33 songs in a zipped folder along with the submission called 'songs' that we recommend placing here to use for training. After extracting the songs folder to the directory above the cloned repository or the BeatGenerator folder in the submission, run "python tester.py" or "tester.py" in the command line. Otherwise, after extracting the submissions zip, navigate to the folder BeatGenerator and type "beatGenerator.py", "python3 beatGenerator.py", or "python beatGenerator.py" into the command line. 
+   Clone the code from the master branch to a directory. Make sure that in the directory above the cloned repository there is a folder called songs containing inputs. We provide a training set of 33 songs in a zipped folder along with the submission called 'songs' that we recommend placing here to use for training. After extracting the songs folder to the directory above the cloned repository or the BeatGenerator folder in the submission, run "python tester.py" or "tester.py" in the command line.  
+   Otherwise, after extracting the submissions zip, navigate to the folder BeatGenerator and type "beatGenerator.py", "python3 beatGenerator.py", or "python beatGenerator.py" into the command line. 
+   Please Note: THe code will not run properly if the songs folder is not in the directory above either the beatGenerator folder in the submission or the cloned git repo.
    
 To run the program, open a fresh terminal window and navigate to the directory where the cloned repository is located and type "python3 tester.py". The result of the training will be saved to an mp3 file called generated_music.mp3 within this directory. 
 
