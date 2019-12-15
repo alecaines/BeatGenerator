@@ -7,8 +7,7 @@ Shep Sims, Andrew Taylor, Alexander Caines
    This project creates a generative model for songs given a certain genre. Specifically, we wish to generate beats mimicing those typically used by rappers during production, as they are not inheritly tied to the lyics imposed on top of them. The project was deemed feasible as many scholarly articles and papers have been published on the subject. These sources proved incredibly useful to us as we decided on the finer points of our model implementation. We in particular found Roberts, Engel, and Eck’s paper on applying hierarchical variational autoencoders to music helpful when we made design choices for our network. We also consulted Kotecha and Young’s paper on generating music with LSTMs when we made high level network structure decisions. Notably we did not incorporate an LSTM in the final version of our model but we considered it based on the results published by Kotecha and Young. Lastly, we took some inspiration for the core idea of our project from Tero Parviainen’s freely available Neural Drum Machine. 
 
 ## Introduction
-
-Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters.###
+Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters. As was aforementioned, the task of this model is to generate rap beats given a training set of sufficient size.
 
 ## Preparing Environment
 
