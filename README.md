@@ -5,7 +5,8 @@ Shep Sims, Andrew Taylor, Alexander Caines
 ## Objective
    This project creates a generative model for songs given a certain genre. Specifically, we wish to generate beats mimicing those typically used by rappers during production, as they are not inheritly tied to the lyics imposed on top of them. The project was deemed feasible as many scholarly articles and papers have been published on the subject. These sources proved incredibly useful to us as we decided on the finer points of our model implementation. We in particular found Roberts, Engel, and Eck’s paper on applying hierarchical variational autoencoders to music helpful when we made design choices for our network. We also consulted Kotecha and Young’s paper on generating music with LSTMs when we made high level network structure decisions. Notably we did not incorporate an LSTM in the final version of our model but we considered it based on the results published by Kotecha and Young. Lastly, we took some inspiration for the core idea of our project from Tero Parviainen’s freely available Neural Drum Machine. 
 
-###Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters.###
+## Introduction
+Rap beats often are short samples of “licks” from different individual instruments repeated throughout the course of the song. We wish to produce a sound byte that mimics these licks for a given instrument over a predetermined set of meters.###
 
 ## Preparing Environment
    In order to run the model, ffmpeg must be installed on the system. For Windows machines, this video https://www.youtube.com/watch?v=w1q7POTlJeY provides clear instructions for installing ffmpeg. The builds for all machines can be found  at http://www.ffmpeg.org/download.html but the necessary preparations for linux and mac are unknown to me (Alexander Caines).
@@ -28,9 +29,12 @@ To run the program, open a fresh terminal window and navigate to the directory w
 
 ## Datasets
    There are many massive datasets online that provide genre or instrument specific tracks that could be used to train the model, however, many of these datsets contain copyrights or other restrictive permissions for use, or the filetypes are not easily handled by python.  As such, we use a set of mp3 audio files gathered from a distributor of copyright free beats on youtube, user "heroboard - Music for Creators." The training set consisted of 27 of the 33 songs we had and the testing set consisted of the remaining 6 songs.  
+
    
 ## Preprocessing
    The data comes in as an mp3 file which python does not know how to handle, so we provide a transformData method to handle this.  This method accepts an mp3 filepath, and using the pydub library creates a vectorized representation of the audio segment from it.  This representation is truncated to the first 3s of audio as larger representations do not allow running # ! $ ! $ ^ &
+
+   It should be noted that the output of our model is not consistent with the goals of the project. The output the model returned was an mp3 file with nothing but white noise as its contents. The corrupted state of the data was due to the state of the inputs. When constructing the training dataset, we appended the transformed audio data to a numpy array. Rather than appending it to a list, it concatenated each subsequent datum with the previous--creating one large input matrix. Upon recommendation from Professor Watson, we attempted to implement tensors rather than numpy arrays. However, we encountered errors with the dimensionality of each input--as they were inconsistent. This was due to the way that pydub extracts audio data from a file. Given that each song has a different sample rate, the number of samples (elements of the audio matrix) differs between song, even when holding the length of the song constant (3000 milliseconds in our implementation). There were attempts made at padding the data after it had been collected. This involved adding each audio datum to a list (which would not concatenate the data), finding the datum with the largest size, and then padding with respect to that using np.pad. This attempt can be seen in the lambdas branch. However, due to the enormity of the datum's dimensionality, the python killed the process during the first epoch.
    
 ## Model Architecture 
 
