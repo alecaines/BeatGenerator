@@ -21,11 +21,11 @@ class BEATGENERATOR(object):
 
 
     def __init__(self):
-        self.tensor = np.array([]) # ndmin = 2) #Creates a 2D array where each row would represent 1 input song
-        self.frame_rates = np.array([]) # Frame_rates and channels would remain as 1D arrays, where each index is an input song.
+        self.tensor = np.array([]) 
+        self.frame_rates = np.array([])
         self.channels = np.array([])
         self.sample_size = 90000
-        self.epochs = 500
+        self.epochs = 10000 #switch to 500 if output is unintelligible
         self.intermediate_dim = 512
         self.batch_size = 128
         self.latent_dim = 2
