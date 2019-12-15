@@ -25,16 +25,10 @@ class BEATGENERATOR(object):
         self.frame_rates = np.array([]) # Frame_rates and channels would remain as 1D arrays, where each index is an input song.
         self.channels = np.array([])
         self.original_dim = 9000
-        # tf.Tensor version:
-        #self.tensor = tf.constant([])
-        # Also tf.stack() might work for self.tensor. 
-        #self.frame_rates = tf.constant([])
-        #self.channels = tf.constant([])
-
-        #lists can hold other lists of inconsistent dimensions as elements whereas numpy arrays cannot
-        #self.tensor = []
-        #self.frame_rates = []
-        #self.channels = []
+        self.epochs = 10000
+        self.intermediate_dim = 512
+        self.batch_size = 128
+        self.latent_dim = 2
 
     # converts mp3 to numpy array
     def transformData(self, f, t = 3):
@@ -44,21 +38,11 @@ class BEATGENERATOR(object):
             a = pydub.AudioSegment.from_mp3(file = f)[:duration].set_channels(1)
         else:
             a = f
-        # if a.channels == 2:
-        #     y = y.reshape((-1,2))
 
         samples = a.get_array_of_samples()[:self.original_dim]
         # converts mp3 data to numpy array
         y = list(map(lambda sample:sample/2**15,samples))
-        #y = np.array(a.get_array_of_samples()) #, ndmin = 2)
-        #y = np.float32(y)/2**15
         
-        # tf.Tensor version:
-        #y = tf.convert_to_tensor(y, dtype = tf.float32)
-        
-        #normalizes data and puts it into an np array:
-        #y = np.array(list(map(lambda x:x/(2**15), a.get_array_of_samples())))
-
         return a.frame_rate, a.channels, y
     
     # writes quantified audio data to txt
@@ -72,9 +56,6 @@ class BEATGENERATOR(object):
 
     #transforms audio data back to audio
     def toAudio(self, rate, signal, channels):
-##        print(signal.shape)
-##        channel1 = signal
-##        channel2 = signal[:,1]
         audio_segment = pydub.AudioSegment(
             signal.tobytes(),
             frame_rate = rate,
@@ -128,18 +109,20 @@ class BEATGENERATOR(object):
 
         
         #Hyper Paramters for model: 
-        original_dim = self.original_dim#238464#1 #7570944 #3 #264600 # currently set to 3s of audio
+        original_dim = self.original_dim #238464#1 #7570944 #3 #264600 # currently set to 3s of audio
         input_shape = (original_dim, )
-        intermediate_dim = 512
-        batch_size = 128
-        latent_dim = 2
-        epochs = 500
+        intermediate_dim = self.intermediate_dim
+        batch_size = self.batch_size
+        latent_dim = self.latent_dim
+        epochs = self.epochs
         training_data = self.tensor[:28]
         testing_data = self.tensor[28:]
 
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
         x = Dense(intermediate_dim, activation='relu')(inputs)
+        x = Dense(intermediate_dim, activation='relu')(x)
+        x = Dense(intermediate_dim, activation='relu')(x)
         z_mean = Dense(latent_dim, name='z_mean')(x)
         z_log_var = Dense(latent_dim, name='z_log_var')(x)
 
@@ -156,6 +139,8 @@ class BEATGENERATOR(object):
         # build decoder model
         latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
         x = Dense(intermediate_dim, activation='relu')(latent_inputs)
+        x = Dense(intermediate_dim, activation='relu')(x)
+        x = Dense(intermediate_dim, activation='relu')(x)
         outputs = Dense(original_dim, activation='sigmoid')(x)
 
         # instantiate decoder model
