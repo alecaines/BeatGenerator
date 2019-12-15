@@ -25,7 +25,7 @@ class BEATGENERATOR(object):
         self.frame_rates = np.array([])
         self.channels = np.array([])
         self.sample_size = 90000
-        self.epochs = 10000 #switch to 500 if output is unintelligible
+        self.epochs = 500
         self.intermediate_dim = 512
         self.batch_size = 128
         self.latent_dim = 2
