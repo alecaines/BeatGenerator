@@ -24,7 +24,7 @@ class BEATGENERATOR(object):
         self.tensor = np.array([]) # ndmin = 2) #Creates a 2D array where each row would represent 1 input song
         self.frame_rates = np.array([]) # Frame_rates and channels would remain as 1D arrays, where each index is an input song.
         self.channels = np.array([])
-
+        self.original_dim = 9000
         # tf.Tensor version:
         #self.tensor = tf.constant([])
         # Also tf.stack() might work for self.tensor. 
@@ -37,18 +37,19 @@ class BEATGENERATOR(object):
         #self.channels = []
 
     # converts mp3 to numpy array
-    def transformData(self, f):
-        
+    def transformData(self, f, t = 3):
+        duration = t*1000
         #retrieves audio
         if type(f) != pydub.audio_segment.AudioSegment:
-            a = pydub.AudioSegment.from_mp3(file = f).set_channels(1)
+            a = pydub.AudioSegment.from_mp3(file = f)[:duration].set_channels(1)
         else:
             a = f
         # if a.channels == 2:
         #     y = y.reshape((-1,2))
 
+        samples = a.get_array_of_samples()[:self.original_dim]
         # converts mp3 data to numpy array
-        y = list(map(lambda x:x/2**15, a.get_array_of_samples()))
+        y = list(map(lambda sample:sample/2**15,samples))
         #y = np.array(a.get_array_of_samples()) #, ndmin = 2)
         #y = np.float32(y)/2**15
         
@@ -127,13 +128,14 @@ class BEATGENERATOR(object):
 
         
         #Hyper Paramters for model: 
-        original_dim = 238464#1 #7570944 #3 #264600 # currently set to 3s of audio
+        original_dim = self.original_dim#238464#1 #7570944 #3 #264600 # currently set to 3s of audio
         input_shape = (original_dim, )
         intermediate_dim = 512
         batch_size = 128
         latent_dim = 2
         epochs = 500
-        training_data = self.tensor
+        training_data = self.tensor[:28]
+        testing_data = self.tensor[28:]
 
         #Build encoder model:
         inputs = Input(shape = input_shape, name = 'encoder_input')
@@ -180,12 +182,12 @@ class BEATGENERATOR(object):
         #log_dir="../logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
         #tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, write_graph = True ,write_grads = True, histogram_freq = 1)
-        vae.fit(x =training_data[:28], epochs=epochs, batch_size=batch_size)#, callbacks = [tensorboard_callback])
+        vae.fit(x =training_data, epochs=epochs, batch_size=batch_size)#, callbacks = [tensorboard_callback])
         print("here1")
         vae.summary()
 
         #generate
-        prediction = (2**15)*(vae.predict(x = training_data[28:], batch_size = batch_size))
+        prediction = (2**15)*(vae.predict(x = testing_data, batch_size = batch_size))
         print("here2")
         print(type(prediction))
         print(len(prediction))
